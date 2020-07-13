@@ -47,7 +47,7 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
     if (timeLeft >= 1) {
       if (foodState == "raw") {
         foodState = "cooked";
-        startTime = new DateTime.now().millisecondsSinceEpoch;
+        startTime = startTime + toCook.cookingTime * 1000;
         player.play("sfx_ai_chicken_call_01.wav");
       } else if (foodState == "cooked") {
         foodState = "burnt";
