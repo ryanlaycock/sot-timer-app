@@ -7,5 +7,9 @@ void main() => runApp(MaterialApp(
     routes: {
       '/': (context) => Home(),
       '/timer': (context) => Timer(),
-    }
+    },
+    theme: ThemeData(
+      fontFamily: 'Windlass',
+      scaffoldBackgroundColor: Color(0xFF0E525B),
+    ),
 ));

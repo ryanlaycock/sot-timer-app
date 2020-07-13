@@ -23,6 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  wakelock: ^0.1.4+2
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -70,6 +71,10 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
+  fonts:
+    - family: Windlass
+      fonts:
+        - asset: fonts/Windlass.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

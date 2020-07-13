@@ -1,5 +1,7 @@
+import 'dart:math';
 import 'package:sottimer/services/Food.dart';
 import 'package:flutter/material.dart';
+import 'package:wakelock/wakelock.dart';
 
 
 class Timer extends StatefulWidget {
@@ -11,47 +13,75 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
 
   Food toCook = new Food();
   AnimationController _controller;
+  int startTime;
+  String foodState = "raw";
 
   String get timerString {
-    Duration duration = _controller.duration * _controller.value;
-    if (duration.inSeconds >= toCook.cookingTime) {
-      duration -= Duration(seconds: toCook.cookingTime);
+    if (foodState == "burnt") {
+      return "0:00";
     }
-    return '${duration.inMinutes}:${(duration.inSeconds % 60)
+    int currentTime = new DateTime.now().millisecondsSinceEpoch;
+    Duration timeLeft = new Duration(milliseconds: toCook.cookingTime*1000 - (currentTime - startTime));
+    return '${timeLeft.inMinutes}:${(timeLeft.inSeconds % 60)
         .toString()
         .padLeft(2, '0')}';
   }
 
   String get cookingState {
-    Duration duration = _controller.duration * _controller.value;
-    if (duration.inSeconds == 0) {
+    if (foodState == "burnt") {
       return "Shiver me timbers, the ${toCook.name} is burnt!";
-    } else if (duration.inSeconds >= toCook.cookingTime) {
-      return '${toCook.name} is cooking...';
-    } else if (duration.inSeconds <= toCook.cookingTime){
+    } else if (foodState == "raw") {
+      return 'Cooking ${toCook.name}...';
+    } else if (foodState == "cooked"){
       return '${toCook.name} is cooked, get it before it burns!';
     }
   }
 
   double get timerRemaining {
-    Duration duration = _controller.duration * _controller.value;
-    if (duration.inSeconds > toCook.cookingTime.toDouble()) {
-      return (toCook.cookingTime*2 - duration.inSeconds)/ toCook.cookingTime;
+    if (foodState == "burnt") {
+      return 0;
     }
-    return duration.inSeconds / toCook.cookingTime;
+    int currentTime = new DateTime.now().millisecondsSinceEpoch;
+    double timeLeft = (currentTime - startTime) / (toCook.cookingTime-1) / 1000;
+    if (timeLeft >= 1) {
+      if (foodState == "raw") {
+        foodState = "cooked";
+        startTime = new DateTime.now().millisecondsSinceEpoch;
+      } else if (foodState == "cooked") {
+        foodState = "burnt";
+      }
+    }
+    return timeLeft;
+  }
+
+  Color get timerColor {
+    if (foodState == "raw") {
+      return Color(0xFF48BFF6);
+    }
+    return Color(0xFFFEFD000);
+  }
+
+  Color get timerBackgroundColor {
+    if (foodState == "burnt") {
+      return Color(0xFF720819);
+    }
+    return Color(0xFF031010);
   }
 
   @override
   void initState(){
     super.initState();
+    startTime = new DateTime.now().millisecondsSinceEpoch;
     _controller = AnimationController(
       vsync: this,
     );
+    Wakelock.enable();
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    Wakelock.disable();
     super.dispose();
   }
 
@@ -66,24 +96,41 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
     _controller.reverse(from: toCook.cookingTime.toDouble()*2);
 
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.grey[800],
+        backgroundColor: Color(0xff031010),
           onPressed: () {
             Navigator.pushNamed(context, '/');
           },
-          child: Icon(Icons.cancel),
+          child: Icon(Icons.clear),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: SafeArea(
         child: Column(
-            children: <Widget>[
-              AnimatedBuilder(
-                animation: _controller,
-                builder: (BuildContext context, Widget child) {
-                  return Center(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            AnimatedBuilder(
+              animation: _controller,
+              builder: (BuildContext context, Widget child) {
+                return Container(
+                  child: Center(
                     child: Column(
                       children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 40),
+                            child: Text(
+                              '$cookingState',
+                              style: TextStyle(
+                                fontSize: 30.0,
+                                color: Colors.white70,
+                                letterSpacing: 2,
+                                height: 1.2,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
                         SizedBox(
                           child: Stack(
                             children: <Widget>[
@@ -91,42 +138,48 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
                                 child: SizedBox(
                                   child: CircularProgressIndicator(
                                     value: timerRemaining,
+                                    backgroundColor: timerBackgroundColor,
+                                    valueColor: new AlwaysStoppedAnimation<Color>(timerColor),
+                                    strokeWidth: 20,
                                   ),
-                                height: 200.0,
-                                width: 200.0,
+                                height: 250.0,
+                                width: 250.0,
                                 ),
                               ),
                               Center(
-                                child: Text(
-                                  '$timerString',
-                                  style: TextStyle(
-                                    color: Colors.amberAccent[200],
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 28.0,
-                                    letterSpacing: 2.0,
-                                  ),
+                                child: Image.asset(
+                                    'assets/${toCook.iconUrl}',
+                                    fit: BoxFit.cover
                                 ),
                               )
                             ]
                           ),
-                          height: 200.0,
-                          width: 200.0,
+                          height: 250.0,
+                          width: 250.0,
                         ),
-                        Text(
-                          '$cookingState',
-                          style: TextStyle(
-                            color: Colors.amberAccent[200],
-                            fontWeight: FontWeight.bold,
-                            fontSize: 28.0,
-                            letterSpacing: 2.0,
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 20, bottom: 60),
+                            child: Text(
+                              '$timerString',
+                              style: TextStyle(
+                                fontSize: 30.0,
+                                color: Colors.white70,
+                                letterSpacing: 2,
+                                height: 1.2,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                  );
-                },
-              ),
-            ]
+                  ),
+                );
+              },
+            ),
+          ]
         ),
       ),
     );
