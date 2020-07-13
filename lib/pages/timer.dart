@@ -1,7 +1,7 @@
-import 'dart:math';
 import 'package:sottimer/services/Food.dart';
 import 'package:flutter/material.dart';
 import 'package:wakelock/wakelock.dart';
+import 'package:audioplayers/audio_cache.dart';
 
 
 class Timer extends StatefulWidget {
@@ -15,6 +15,7 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
   AnimationController _controller;
   int startTime;
   String foodState = "raw";
+  static AudioCache player = new AudioCache();
 
   String get timerString {
     if (foodState == "burnt") {
@@ -47,6 +48,7 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
       if (foodState == "raw") {
         foodState = "cooked";
         startTime = new DateTime.now().millisecondsSinceEpoch;
+        player.play("sfx_ai_chicken_call_01.wav");
       } else if (foodState == "cooked") {
         foodState = "burnt";
       }
