@@ -4,11 +4,11 @@ import 'package:sottimer/services/Food.dart';
 class Home extends StatelessWidget {
 
   final List<Food> foods = [
-    Food(name: 'Fish', cookingTime: 40, iconUrl: 'Fish_Olive_PlentiFin.png'),
-    Food(name: 'Trophy Fish', cookingTime: 90, iconUrl: 'Fish_Ruby_SplashTail.png'),
-    Food(name: 'Meat', cookingTime: 60, iconUrl: 'Chicken.png'),
-    Food(name: 'Kraken', cookingTime: 120, iconUrl: 'Kraken_Meat.png'),
-    Food(name: 'Megalodon', cookingTime: 120, iconUrl: 'Meg_Meat.png'),
+    Food(name: 'Fish', cookingTime: 45, iconUrl: 'Fish_Olive_PlentiFin.png'),
+    Food(name: 'Trophy Fish', cookingTime: 95, iconUrl: 'Fish_Ruby_SplashTail.png'),
+    Food(name: 'Meat', cookingTime: 65, iconUrl: 'Chicken.png'),
+    Food(name: 'Kraken', cookingTime: 125, iconUrl: 'Kraken_Meat.png'),
+    Food(name: 'Megalodon', cookingTime: 125, iconUrl: 'Meg_Meat.png'),
   ];
 
   @override
