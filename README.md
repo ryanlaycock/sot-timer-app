@@ -4,7 +4,7 @@ _"SoT Cooking Timer is a handy unofficial companion app to be used alongside the
 
 A simple Android application written in dart using the Flutter framework. The app is currently published to the [Google Play Store](https://play.google.com/store/apps/details?id=uk.ryanlaycock.sottimer) and as of March 2021 has over **10k downloads** and a **4.7 star rating** (from 74 reviews).
 
-![Play Store Banner](banner.png)
+![Play Store Banner](https://raw.githubusercontent.com/ryanlaycock/sot-timer-app/master/banner.png)
 
 ## Description
 > Completely free and with zero adverts, the SoT Cooking Timer is a handy unofficial companion app to be used alongside the PC and Xbox game, Sea of Thieves.  
